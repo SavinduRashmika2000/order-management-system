@@ -48,11 +48,18 @@ public class OrderManagementSystemApplication {
 			}
 
 			// Products
+			productRepository.findAll().forEach(product -> {
+				if ("Available".equals(product.getStatus())) {
+					product.setStatus("ACTIVE");
+					productRepository.save(product);
+				}
+			});
+
 			if (productRepository.count() == 0) {
 				productRepository.save(Product.builder()
 						.name("Laptop")
 						.category("Electronics")
-						.status("Available")
+						.status("ACTIVE")
 						.quantity(50)
 						.price(new BigDecimal("1200.00"))
 						.discount(new BigDecimal("100.00"))
@@ -60,7 +67,7 @@ public class OrderManagementSystemApplication {
 				productRepository.save(Product.builder()
 						.name("Mouse")
 						.category("Electronics")
-						.status("Available")
+						.status("ACTIVE")
 						.quantity(200)
 						.price(new BigDecimal("25.00"))
 						.discount(new BigDecimal("5.00"))
