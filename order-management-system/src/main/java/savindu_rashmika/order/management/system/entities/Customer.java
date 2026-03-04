@@ -29,4 +29,7 @@ public class Customer {
     private String latitude;
     private String longitude;
     private String googleMapLink;
+
+    @Builder.Default
+    private boolean isActive = true;
 }
