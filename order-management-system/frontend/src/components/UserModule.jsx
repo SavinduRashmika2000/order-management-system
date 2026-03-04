@@ -132,47 +132,59 @@ const UserModule = ({ isAdmin }) => {
 
             {showAddForm && !showInactive && isAdmin && (
                 <div className="bg-white p-6 rounded-xl shadow-sm border border-slate-200 mb-8">
-                    <h3 className="text-lg font-bold mb-4 text-slate-800">{editingUserId ? 'Edit User' : 'Add New User'}</h3>
-                    <form onSubmit={handleAddUser} className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <input
-                            type="text"
-                            name="name"
-                            placeholder="Full Name"
-                            value={newUser.name || ''}
-                            onChange={handleInputChange}
-                            className="bg-slate-50 border border-slate-200 p-2.5 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none"
-                            required
-                        />
-                        <input
-                            type="text"
-                            name="username"
-                            placeholder="Username"
-                            value={newUser.username || ''}
-                            onChange={handleInputChange}
-                            className="bg-slate-50 border border-slate-200 p-2.5 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none"
-                            required
-                        />
-                        <select
-                            name="role"
-                            value={newUser.role || 'REP'}
-                            onChange={handleInputChange}
-                            className="bg-slate-50 border border-slate-200 p-2.5 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none"
-                            required
-                        >
-                            <option value="REP">Sales Representative</option>
-                            <option value="ADMIN">Administrator</option>
-                        </select>
-                        <input
-                            type="password"
-                            name="password"
-                            placeholder={editingUserId ? "New Password (leave blank to keep current)" : "Password"}
-                            value={newUser.password || ''}
-                            onChange={handleInputChange}
-                            className="bg-slate-50 border border-slate-200 p-2.5 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none"
-                            required={!editingUserId}
-                        />
+                    <h3 className="text-lg font-bold mb-6 text-slate-800 border-b pb-2">{editingUserId ? 'Edit User' : 'Add New User'}</h3>
+                    <form onSubmit={handleAddUser} className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div className="flex flex-col gap-1.5">
+                            <label className="text-sm font-bold text-slate-700 ml-1">Full Name</label>
+                            <input
+                                type="text"
+                                name="name"
+                                placeholder="Enter full name"
+                                value={newUser.name || ''}
+                                onChange={handleInputChange}
+                                className="bg-slate-50 border border-slate-200 p-2.5 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none"
+                                required
+                            />
+                        </div>
+                        <div className="flex flex-col gap-1.5">
+                            <label className="text-sm font-bold text-slate-700 ml-1">Username</label>
+                            <input
+                                type="text"
+                                name="username"
+                                placeholder="Enter username"
+                                value={newUser.username || ''}
+                                onChange={handleInputChange}
+                                className="bg-slate-50 border border-slate-200 p-2.5 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none"
+                                required
+                            />
+                        </div>
+                        <div className="flex flex-col gap-1.5">
+                            <label className="text-sm font-bold text-slate-700 ml-1">Role</label>
+                            <select
+                                name="role"
+                                value={newUser.role || 'REP'}
+                                onChange={handleInputChange}
+                                className="bg-slate-50 border border-slate-200 p-2.5 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none font-medium text-slate-700"
+                                required
+                            >
+                                <option value="REP">Sales Representative</option>
+                                <option value="ADMIN">Administrator</option>
+                            </select>
+                        </div>
+                        <div className="flex flex-col gap-1.5">
+                            <label className="text-sm font-bold text-slate-700 ml-1">Password</label>
+                            <input
+                                type="password"
+                                name="password"
+                                placeholder={editingUserId ? "Leave blank to keep current" : "Enter password"}
+                                value={newUser.password || ''}
+                                onChange={handleInputChange}
+                                className="bg-slate-50 border border-slate-200 p-2.5 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none"
+                                required={!editingUserId}
+                            />
+                        </div>
 
-                        <button type="submit" className="bg-indigo-600 text-white p-2.5 rounded-lg hover:bg-indigo-700 transition font-bold md:col-span-2 mt-2">
+                        <button type="submit" className="bg-indigo-600 text-white p-3 rounded-lg hover:bg-indigo-700 transition font-bold md:col-span-2 mt-2 shadow-md">
                             {editingUserId ? 'Update User' : 'Save User'}
                         </button>
                     </form>
