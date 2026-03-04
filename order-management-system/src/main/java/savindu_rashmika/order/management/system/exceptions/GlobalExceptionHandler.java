@@ -28,6 +28,8 @@ public class GlobalExceptionHandler {
             } else if (message.contains("User not found")) {
                 message = "User not found";
                 status = HttpStatus.UNAUTHORIZED;
+            } else if (message.contains("Account is deactivated")) {
+                status = HttpStatus.FORBIDDEN;
             }
         } else {
             message = "An unexpected error occurred";

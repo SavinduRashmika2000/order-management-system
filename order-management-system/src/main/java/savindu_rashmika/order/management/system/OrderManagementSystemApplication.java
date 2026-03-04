@@ -25,25 +25,27 @@ public class OrderManagementSystemApplication {
 			PasswordEncoder passwordEncoder) {
 		return args -> {
 			// Users
-			repository.findByUsername("admin").ifPresent(repository::delete);
-			var admin = User.builder()
-					.name("Admin User")
-					.username("admin")
-					.password(passwordEncoder.encode("password"))
-					.role(Role.ADMIN)
-					.activeStatus(true)
-					.build();
-			repository.save(admin);
+			if (repository.findByUsername("admin").isEmpty()) {
+				var admin = User.builder()
+						.name("Admin User")
+						.username("admin")
+						.password(passwordEncoder.encode("password"))
+						.role(Role.ADMIN)
+						.activeStatus(true)
+						.build();
+				repository.save(admin);
+			}
 
-			repository.findByUsername("rep").ifPresent(repository::delete);
-			var rep = User.builder()
-					.name("Rep User")
-					.username("rep")
-					.password(passwordEncoder.encode("password"))
-					.role(Role.REP)
-					.activeStatus(true)
-					.build();
-			repository.save(rep);
+			if (repository.findByUsername("rep").isEmpty()) {
+				var rep = User.builder()
+						.name("Rep User")
+						.username("rep")
+						.password(passwordEncoder.encode("password"))
+						.role(Role.REP)
+						.activeStatus(true)
+						.build();
+				repository.save(rep);
+			}
 
 			// Products
 			if (productRepository.count() == 0) {
