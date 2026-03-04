@@ -47,6 +47,8 @@ public class AuthenticationService {
                         throw new RuntimeException("Invalid username or password");
                 } catch (org.springframework.security.core.userdetails.UsernameNotFoundException e) {
                         throw new RuntimeException("User not found");
+                } catch (org.springframework.security.authentication.DisabledException e) {
+                        throw new RuntimeException("Account is deactivated. Please contact an administrator.");
                 } catch (org.springframework.security.core.AuthenticationException e) {
                         throw new RuntimeException(e.getMessage());
                 }
