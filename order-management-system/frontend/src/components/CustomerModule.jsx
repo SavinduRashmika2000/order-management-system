@@ -175,65 +175,83 @@ const CustomerModule = ({ isAdmin }) => {
 
             {showAddForm && !showInactive && (
                 <div className="bg-white p-6 rounded-xl shadow-sm border border-slate-200 mb-8">
-                    <h3 className="text-lg font-bold mb-4 text-slate-800">{editingCustomerId ? 'Edit Customer' : 'Add New Customer'}</h3>
-                    <form onSubmit={handleAddCustomer} className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <input
-                            type="text"
-                            name="shopName"
-                            placeholder="Shop Name"
-                            value={newCustomer.shopName || ''}
-                            onChange={handleInputChange}
-                            className="bg-slate-50 border border-slate-200 p-2.5 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none"
-                            required
-                        />
-                        <input
-                            type="text"
-                            name="ownerName"
-                            placeholder="Owner Name"
-                            value={newCustomer.ownerName || ''}
-                            onChange={handleInputChange}
-                            className="bg-slate-50 border border-slate-200 p-2.5 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none"
-                            required
-                        />
-                        <input
-                            type="text"
-                            name="phoneNo"
-                            placeholder="Phone Number"
-                            value={newCustomer.phoneNo || ''}
-                            onChange={handleInputChange}
-                            className="bg-slate-50 border border-slate-200 p-2.5 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none"
-                            required
-                        />
-                        <input
-                            type="email"
-                            name="email"
-                            placeholder="Email"
-                            value={newCustomer.email || ''}
-                            onChange={handleInputChange}
-                            className="bg-slate-50 border border-slate-200 p-2.5 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none"
-                            required
-                        />
-                        <input
-                            type="text"
-                            name="city"
-                            placeholder="City"
-                            value={newCustomer.city || ''}
-                            onChange={handleInputChange}
-                            className="bg-slate-50 border border-slate-200 p-2.5 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none"
-                            required
-                        />
-                        <input
-                            type="text"
-                            name="address"
-                            placeholder="Address"
-                            value={newCustomer.address || ''}
-                            onChange={handleInputChange}
-                            className="bg-slate-50 border border-slate-200 p-2.5 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none col-span-2"
-                            required
-                        />
+                    <h3 className="text-lg font-bold mb-6 text-slate-800 border-b pb-2">{editingCustomerId ? 'Edit Customer' : 'Add New Customer'}</h3>
+                    <form onSubmit={handleAddCustomer} className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div className="flex flex-col gap-1.5">
+                            <label className="text-sm font-bold text-slate-700 ml-1">Shop Name</label>
+                            <input
+                                type="text"
+                                name="shopName"
+                                placeholder="e.g. Super Mart"
+                                value={newCustomer.shopName || ''}
+                                onChange={handleInputChange}
+                                className="bg-slate-50 border border-slate-200 p-2.5 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none"
+                                required
+                            />
+                        </div>
+                        <div className="flex flex-col gap-1.5">
+                            <label className="text-sm font-bold text-slate-700 ml-1">Owner Name</label>
+                            <input
+                                type="text"
+                                name="ownerName"
+                                placeholder="e.g. John Doe"
+                                value={newCustomer.ownerName || ''}
+                                onChange={handleInputChange}
+                                className="bg-slate-50 border border-slate-200 p-2.5 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none"
+                                required
+                            />
+                        </div>
+                        <div className="flex flex-col gap-1.5">
+                            <label className="text-sm font-bold text-slate-700 ml-1">Phone Number</label>
+                            <input
+                                type="text"
+                                name="phoneNo"
+                                placeholder="e.g. +94..."
+                                value={newCustomer.phoneNo || ''}
+                                onChange={handleInputChange}
+                                className="bg-slate-50 border border-slate-200 p-2.5 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none"
+                                required
+                            />
+                        </div>
+                        <div className="flex flex-col gap-1.5">
+                            <label className="text-sm font-bold text-slate-700 ml-1">Email Address</label>
+                            <input
+                                type="email"
+                                name="email"
+                                placeholder="e.g. customer@example.com"
+                                value={newCustomer.email || ''}
+                                onChange={handleInputChange}
+                                className="bg-slate-50 border border-slate-200 p-2.5 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none"
+                                required
+                            />
+                        </div>
+                        <div className="flex flex-col gap-1.5">
+                            <label className="text-sm font-bold text-slate-700 ml-1">City</label>
+                            <input
+                                type="text"
+                                name="city"
+                                placeholder="e.g. Colombo"
+                                value={newCustomer.city || ''}
+                                onChange={handleInputChange}
+                                className="bg-slate-50 border border-slate-200 p-2.5 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none"
+                                required
+                            />
+                        </div>
+                        <div className="flex flex-col gap-1.5 md:col-span-2">
+                            <label className="text-sm font-bold text-slate-700 ml-1">Full Address</label>
+                            <input
+                                type="text"
+                                name="address"
+                                placeholder="Enter full address"
+                                value={newCustomer.address || ''}
+                                onChange={handleInputChange}
+                                className="bg-slate-50 border border-slate-200 p-2.5 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none w-full"
+                                required
+                            />
+                        </div>
                         <div className="md:col-span-2 space-y-4">
                             <div className="flex flex-col gap-2">
-                                <label className="text-sm font-bold text-slate-600">Shop Image</label>
+                                <label className="text-sm font-bold text-slate-700 ml-1">Shop Image</label>
                                 <div className="flex items-center gap-4">
                                     {newCustomer.image ? (
                                         <>
@@ -264,7 +282,7 @@ const CustomerModule = ({ isAdmin }) => {
                             </div>
 
                             <div className="flex flex-col gap-2">
-                                <label className="text-sm font-bold text-slate-600">Location Details</label>
+                                <label className="text-sm font-bold text-slate-700 ml-1">Location Details</label>
                                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                     <div className="flex flex-col gap-1">
                                         <label className="text-xs text-slate-500">Latitude</label>
@@ -293,7 +311,7 @@ const CustomerModule = ({ isAdmin }) => {
                                     type="button"
                                     onClick={fetchGPSLocation}
                                     disabled={fetchingLocation}
-                                    className="bg-indigo-50 text-indigo-700 px-4 py-2 rounded-lg hover:bg-indigo-100 transition font-medium flex items-center justify-center gap-2 mt-2"
+                                    className="bg-indigo-50 text-indigo-700 px-4 py-2 rounded-lg hover:bg-indigo-100 transition font-medium flex items-center justify-center gap-2 mt-2 border border-indigo-100"
                                 >
                                     {fetchingLocation ? (
                                         <span className="inline-block animate-spin h-4 w-4 border-2 border-indigo-700 border-t-transparent rounded-full"></span>
@@ -303,7 +321,7 @@ const CustomerModule = ({ isAdmin }) => {
                         </div>
 
                         <div className="md:col-span-2">
-                            <label className="text-sm font-bold text-slate-600 mb-2 block">Google Map Link</label>
+                            <label className="text-sm font-bold text-slate-700 ml-1 mb-2 block">Google Map Link</label>
                             <input
                                 type="text"
                                 name="googleMapLink"
@@ -314,7 +332,7 @@ const CustomerModule = ({ isAdmin }) => {
                             />
                         </div>
 
-                        <button type="submit" className="bg-indigo-600 text-white p-2.5 rounded-lg hover:bg-indigo-700 transition font-bold md:col-span-2">
+                        <button type="submit" className="bg-indigo-600 text-white p-3 rounded-lg hover:bg-indigo-700 transition font-bold md:col-span-2 mt-2 shadow-md">
                             {editingCustomerId ? 'Update Customer' : 'Save Customer'}
                         </button>
                     </form>
