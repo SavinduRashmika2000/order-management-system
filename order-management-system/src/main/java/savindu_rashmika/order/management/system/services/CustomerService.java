@@ -13,8 +13,12 @@ public class CustomerService {
 
     private final CustomerRepository repository;
 
-    public List<Customer> findAll() {
-        return repository.findAll();
+    public List<Customer> findActive() {
+        return repository.findByIsActiveTrue();
+    }
+
+    public List<Customer> findInactive() {
+        return repository.findByIsActiveFalse();
     }
 
     public Customer save(Customer customer) {
@@ -25,7 +29,30 @@ public class CustomerService {
         return repository.findById(id).orElseThrow();
     }
 
-    public void deleteById(Integer id) {
-        repository.deleteById(id);
+    public void deactivateById(Integer id) {
+        Customer customer = findById(id);
+        customer.setActive(false);
+        repository.save(customer);
+    }
+
+    public Customer update(Integer id, Customer updatedCustomer) {
+        Customer existingCustomer = findById(id);
+        existingCustomer.setShopName(updatedCustomer.getShopName());
+        existingCustomer.setOwnerName(updatedCustomer.getOwnerName());
+        existingCustomer.setPhoneNo(updatedCustomer.getPhoneNo());
+        existingCustomer.setEmail(updatedCustomer.getEmail());
+        existingCustomer.setCity(updatedCustomer.getCity());
+        existingCustomer.setAddress(updatedCustomer.getAddress());
+        existingCustomer.setImage(updatedCustomer.getImage());
+        existingCustomer.setLatitude(updatedCustomer.getLatitude());
+        existingCustomer.setLongitude(updatedCustomer.getLongitude());
+        existingCustomer.setGoogleMapLink(updatedCustomer.getGoogleMapLink());
+        return repository.save(existingCustomer);
+    }
+
+    public Customer reactivateById(Integer id) {
+        Customer customer = findById(id);
+        customer.setActive(true);
+        return repository.save(customer);
     }
 }
