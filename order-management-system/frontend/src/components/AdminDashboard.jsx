@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import CustomerModule from './CustomerModule';
+import UserModule from './UserModule';
 
 const AdminDashboard = () => {
     const navigate = useNavigate();
@@ -16,7 +17,7 @@ const AdminDashboard = () => {
             case 'customers':
                 return <CustomerModule isAdmin={true} />;
             case 'users':
-                return <div className="p-8"><h2 className="text-2xl font-bold mb-4">Users Management</h2><p className="text-slate-500">Users module coming soon...</p></div>;
+                return <UserModule isAdmin={true} />;
             case 'products':
                 return <div className="p-8"><h2 className="text-2xl font-bold mb-4">Products Management</h2><p className="text-slate-500">Products module coming soon...</p></div>;
             case 'orders':

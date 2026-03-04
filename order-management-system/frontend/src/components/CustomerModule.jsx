@@ -6,6 +6,8 @@ const CustomerModule = ({ isAdmin }) => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
     const [showAddForm, setShowAddForm] = useState(false);
+    const [showInactive, setShowInactive] = useState(false);
+    const [editingCustomerId, setEditingCustomerId] = useState(null);
     const [newCustomer, setNewCustomer] = useState({
         shopName: '',
         ownerName: '',
@@ -22,12 +24,13 @@ const CustomerModule = ({ isAdmin }) => {
 
     useEffect(() => {
         fetchCustomers();
-    }, []);
+    }, [showInactive]);
 
     const fetchCustomers = async () => {
         try {
             setLoading(true);
-            const response = await api.get('/customers');
+            const endpoint = showInactive ? '/customers/inactive' : '/customers';
+            const response = await api.get(endpoint);
             setCustomers(response.data);
             setError('');
         } catch (err) {
@@ -83,8 +86,13 @@ const CustomerModule = ({ isAdmin }) => {
     const handleAddCustomer = async (e) => {
         e.preventDefault();
         try {
-            await api.post('/customers', newCustomer);
+            if (editingCustomerId) {
+                await api.put(`/customers/${editingCustomerId}`, newCustomer);
+            } else {
+                await api.post('/customers', newCustomer);
+            }
             setShowAddForm(false);
+            setEditingCustomerId(null);
             setNewCustomer({
                 shopName: '',
                 ownerName: '',
@@ -99,19 +107,35 @@ const CustomerModule = ({ isAdmin }) => {
             });
             fetchCustomers();
         } catch (err) {
-            console.error('Error adding customer:', err);
-            alert('Failed to add customer');
+            console.error('Error saving customer:', err);
+            alert('Failed to save customer');
+        }
+    };
+
+    const handleEditClick = (customer) => {
+        setNewCustomer(customer);
+        setEditingCustomerId(customer.id);
+        setShowAddForm(true);
+    };
+
+    const handleReactivateCustomer = async (id) => {
+        try {
+            await api.put(`/customers/${id}/reactivate`);
+            fetchCustomers();
+        } catch (err) {
+            console.error('Error reactivating customer:', err);
+            alert('Failed to reactivate customer');
         }
     };
 
     const handleDeleteCustomer = async (id) => {
-        if (!window.confirm('Are you sure you want to delete this customer?')) return;
+        if (!window.confirm('Are you sure you want to deactivate this customer?')) return;
         try {
-            await api.delete(`/customers/${id}`);
+            await api.put(`/customers/${id}/deactivate`);
             fetchCustomers();
         } catch (err) {
-            console.error('Error deleting customer:', err);
-            alert('Failed to delete customer');
+            console.error('Error deactivating customer:', err);
+            alert('Failed to deactivate customer');
         }
     };
 
@@ -120,26 +144,44 @@ const CustomerModule = ({ isAdmin }) => {
     return (
         <div className="p-8">
             <div className="flex justify-between items-center mb-8">
-                <h2 className="text-2xl font-bold text-slate-800">Customer Management</h2>
-                <button
-                    onClick={() => setShowAddForm(!showAddForm)}
-                    className="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition shadow-sm font-medium"
-                >
-                    {showAddForm ? 'Cancel' : '+ Add Customer'}
-                </button>
+                <div className="flex items-center gap-4">
+                    <h2 className="text-2xl font-bold text-slate-800">Customer Management</h2>
+                    <button
+                        onClick={() => setShowInactive(!showInactive)}
+                        className={`text-sm px-3 py-1.5 rounded-full border transition font-medium ${showInactive ? 'bg-slate-800 text-white border-slate-800' : 'bg-white text-slate-600 border-slate-300 hover:bg-slate-50'}`}
+                    >
+                        {showInactive ? 'Showing Deactivated' : 'Show Deactivated'}
+                    </button>
+                </div>
+                {!showInactive && (
+                    <button
+                        onClick={() => {
+                            if (showAddForm) {
+                                setShowAddForm(false);
+                            } else {
+                                setEditingCustomerId(null);
+                                setNewCustomer({ shopName: '', ownerName: '', phoneNo: '', email: '', city: '', address: '', image: '', latitude: '', longitude: '', googleMapLink: '' });
+                                setShowAddForm(true);
+                            }
+                        }}
+                        className="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition shadow-sm font-medium"
+                    >
+                        {showAddForm ? 'Cancel' : '+ Add Customer'}
+                    </button>
+                )}
             </div>
 
             {error && <div className="bg-red-50 text-red-600 p-4 rounded-lg mb-6">{error}</div>}
 
-            {showAddForm && (
+            {showAddForm && !showInactive && (
                 <div className="bg-white p-6 rounded-xl shadow-sm border border-slate-200 mb-8">
-                    <h3 className="text-lg font-bold mb-4 text-slate-800">Add New Customer</h3>
+                    <h3 className="text-lg font-bold mb-4 text-slate-800">{editingCustomerId ? 'Edit Customer' : 'Add New Customer'}</h3>
                     <form onSubmit={handleAddCustomer} className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <input
                             type="text"
                             name="shopName"
                             placeholder="Shop Name"
-                            value={newCustomer.shopName}
+                            value={newCustomer.shopName || ''}
                             onChange={handleInputChange}
                             className="bg-slate-50 border border-slate-200 p-2.5 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none"
                             required
@@ -148,7 +190,7 @@ const CustomerModule = ({ isAdmin }) => {
                             type="text"
                             name="ownerName"
                             placeholder="Owner Name"
-                            value={newCustomer.ownerName}
+                            value={newCustomer.ownerName || ''}
                             onChange={handleInputChange}
                             className="bg-slate-50 border border-slate-200 p-2.5 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none"
                             required
@@ -157,7 +199,7 @@ const CustomerModule = ({ isAdmin }) => {
                             type="text"
                             name="phoneNo"
                             placeholder="Phone Number"
-                            value={newCustomer.phoneNo}
+                            value={newCustomer.phoneNo || ''}
                             onChange={handleInputChange}
                             className="bg-slate-50 border border-slate-200 p-2.5 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none"
                             required
@@ -166,7 +208,7 @@ const CustomerModule = ({ isAdmin }) => {
                             type="email"
                             name="email"
                             placeholder="Email"
-                            value={newCustomer.email}
+                            value={newCustomer.email || ''}
                             onChange={handleInputChange}
                             className="bg-slate-50 border border-slate-200 p-2.5 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none"
                             required
@@ -175,7 +217,7 @@ const CustomerModule = ({ isAdmin }) => {
                             type="text"
                             name="city"
                             placeholder="City"
-                            value={newCustomer.city}
+                            value={newCustomer.city || ''}
                             onChange={handleInputChange}
                             className="bg-slate-50 border border-slate-200 p-2.5 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none"
                             required
@@ -184,7 +226,7 @@ const CustomerModule = ({ isAdmin }) => {
                             type="text"
                             name="address"
                             placeholder="Address"
-                            value={newCustomer.address}
+                            value={newCustomer.address || ''}
                             onChange={handleInputChange}
                             className="bg-slate-50 border border-slate-200 p-2.5 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none col-span-2"
                             required
@@ -193,16 +235,30 @@ const CustomerModule = ({ isAdmin }) => {
                             <div className="flex flex-col gap-2">
                                 <label className="text-sm font-bold text-slate-600">Shop Image</label>
                                 <div className="flex items-center gap-4">
-                                    <input
-                                        type="file"
-                                        accept="image/*"
-                                        onChange={handleFileChange}
-                                        className="text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100"
-                                    />
-                                    {newCustomer.image && (
-                                        <div className="w-16 h-16 rounded-lg overflow-hidden border border-slate-200">
-                                            <img src={newCustomer.image} alt="Preview" className="w-full h-full object-cover" />
-                                        </div>
+                                    {newCustomer.image ? (
+                                        <>
+                                            <div className="w-16 h-16 rounded-lg overflow-hidden border border-slate-200 flex-shrink-0">
+                                                <img src={newCustomer.image} alt="Preview" className="w-full h-full object-cover" />
+                                            </div>
+                                            <label className="cursor-pointer text-sm font-semibold text-indigo-700 bg-indigo-50 px-4 py-2 rounded-lg hover:bg-indigo-100 transition">
+                                                Change Image
+                                                <input type="file" accept="image/*" onChange={handleFileChange} className="hidden" />
+                                            </label>
+                                            <button
+                                                type="button"
+                                                onClick={() => setNewCustomer(prev => ({ ...prev, image: '' }))}
+                                                className="text-sm font-semibold text-red-600 bg-red-50 px-4 py-2 rounded-lg hover:bg-red-100 transition"
+                                            >
+                                                Remove Image
+                                            </button>
+                                        </>
+                                    ) : (
+                                        <input
+                                            type="file"
+                                            accept="image/*"
+                                            onChange={handleFileChange}
+                                            className="text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100"
+                                        />
                                     )}
                                 </div>
                             </div>
@@ -216,7 +272,7 @@ const CustomerModule = ({ isAdmin }) => {
                                             type="text"
                                             name="latitude"
                                             placeholder="Latitude"
-                                            value={newCustomer.latitude}
+                                            value={newCustomer.latitude || ''}
                                             onChange={handleInputChange}
                                             className="bg-slate-50 border border-slate-200 p-2.5 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none w-full"
                                         />
@@ -227,7 +283,7 @@ const CustomerModule = ({ isAdmin }) => {
                                             type="text"
                                             name="longitude"
                                             placeholder="Longitude"
-                                            value={newCustomer.longitude}
+                                            value={newCustomer.longitude || ''}
                                             onChange={handleInputChange}
                                             className="bg-slate-50 border border-slate-200 p-2.5 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none w-full"
                                         />
@@ -252,14 +308,14 @@ const CustomerModule = ({ isAdmin }) => {
                                 type="text"
                                 name="googleMapLink"
                                 placeholder="Paste Google Maps Link here"
-                                value={newCustomer.googleMapLink}
+                                value={newCustomer.googleMapLink || ''}
                                 onChange={handleInputChange}
                                 className="bg-slate-50 border border-slate-200 p-2.5 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none w-full"
                             />
                         </div>
 
                         <button type="submit" className="bg-indigo-600 text-white p-2.5 rounded-lg hover:bg-indigo-700 transition font-bold md:col-span-2">
-                            Save Customer
+                            {editingCustomerId ? 'Update Customer' : 'Save Customer'}
                         </button>
                     </form>
                 </div>
@@ -269,7 +325,7 @@ const CustomerModule = ({ isAdmin }) => {
                 <table className="w-full text-left">
                     <thead className="bg-slate-50 border-b border-slate-200">
                         <tr>
-                            <th className="px-6 py-4 text-xs font-bold text-slate-400 uppercase">Shop Name</th>
+                            <th className="px-6 py-4 text-xs font-bold text-slate-400 uppercase">Shop</th>
                             <th className="px-6 py-4 text-xs font-bold text-slate-400 uppercase">Owner</th>
                             <th className="px-6 py-4 text-xs font-bold text-slate-400 uppercase">City</th>
                             <th className="px-6 py-4 text-xs font-bold text-slate-400 uppercase">Phone</th>
@@ -279,20 +335,40 @@ const CustomerModule = ({ isAdmin }) => {
                     <tbody className="divide-y divide-slate-200">
                         {customers.map(customer => (
                             <tr key={customer.id} className="hover:bg-slate-50 transition">
-                                <td className="px-6 py-4 font-medium text-slate-800">{customer.shopName}</td>
+                                <td className="px-6 py-4">
+                                    <div className="flex items-center gap-4">
+                                        <div className="w-16 h-16 rounded-lg overflow-hidden bg-slate-100 flex-shrink-0 flex items-center justify-center border border-slate-200 shadow-sm">
+                                            {customer.image ? (
+                                                <img src={customer.image} alt={customer.shopName} className="w-full h-full object-cover" />
+                                            ) : (
+                                                <span className="text-slate-400 text-lg font-bold">{customer.shopName.charAt(0)}</span>
+                                            )}
+                                        </div>
+                                        <span className="font-medium text-slate-800 text-base">{customer.shopName}</span>
+                                    </div>
+                                </td>
                                 <td className="px-6 py-4 text-slate-600">{customer.ownerName}</td>
                                 <td className="px-6 py-4 text-slate-600">{customer.city}</td>
                                 <td className="px-6 py-4 text-slate-600">{customer.phoneNo}</td>
                                 <td className="px-6 py-4">
-                                    <div className="flex gap-2">
-                                        <button className="text-indigo-600 hover:text-indigo-800 text-sm font-bold">Details</button>
-                                        {isAdmin && (
-                                            <button
-                                                onClick={() => handleDeleteCustomer(customer.id)}
-                                                className="text-red-600 hover:text-red-800 text-sm font-bold"
-                                            >
-                                                Remove
+                                    <div className="flex gap-3 items-center">
+                                        {showInactive ? (
+                                            <button onClick={() => handleReactivateCustomer(customer.id)} className="text-emerald-600 hover:text-emerald-800 text-sm font-bold bg-emerald-50 px-3 py-1.5 rounded-md transition hover:bg-emerald-100 shadow-sm border border-emerald-100 inline-flex items-center gap-1">
+                                                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6" /></svg>
+                                                Restore
                                             </button>
+                                        ) : (
+                                            <>
+                                                <button onClick={() => handleEditClick(customer)} className="text-indigo-600 hover:text-indigo-800 text-sm font-bold">Edit</button>
+                                                {isAdmin && (
+                                                    <button
+                                                        onClick={() => handleDeleteCustomer(customer.id)}
+                                                        className="text-red-600 hover:text-red-800 text-sm font-bold ml-2"
+                                                    >
+                                                        Deactivate
+                                                    </button>
+                                                )}
+                                            </>
                                         )}
                                     </div>
                                 </td>
@@ -300,7 +376,9 @@ const CustomerModule = ({ isAdmin }) => {
                         ))}
                         {customers.length === 0 && (
                             <tr>
-                                <td colSpan="5" className="px-6 py-10 text-center text-slate-400">No customers found.</td>
+                                <td colSpan="5" className="px-6 py-10 text-center text-slate-400">
+                                    {showInactive ? 'No deactivated customers found.' : 'No customers found.'}
+                                </td>
                             </tr>
                         )}
                     </tbody>
