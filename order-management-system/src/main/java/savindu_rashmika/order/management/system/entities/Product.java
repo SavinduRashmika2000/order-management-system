@@ -21,6 +21,7 @@ public class Product {
     private String name;
     private String category;
     private String status;
+    @Column(columnDefinition = "LONGTEXT")
     private String image;
     private Integer quantity;
     private BigDecimal price;

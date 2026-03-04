@@ -20,6 +20,16 @@ public class ProductController {
         return ResponseEntity.ok(service.findAll());
     }
 
+    @GetMapping("/active")
+    public ResponseEntity<List<Product>> findActive() {
+        return ResponseEntity.ok(service.findByStatus("ACTIVE"));
+    }
+
+    @GetMapping("/inactive")
+    public ResponseEntity<List<Product>> findInactive() {
+        return ResponseEntity.ok(service.findByStatus("HIDDEN"));
+    }
+
     @PostMapping
     public ResponseEntity<Product> save(@RequestBody Product product) {
         return ResponseEntity.ok(service.save(product));
@@ -28,6 +38,22 @@ public class ProductController {
     @GetMapping("/{id}")
     public ResponseEntity<Product> findById(@PathVariable Integer id) {
         return ResponseEntity.ok(service.findById(id));
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<Product> update(@PathVariable Integer id, @RequestBody Product product) {
+        return ResponseEntity.ok(service.update(id, product));
+    }
+
+    @PutMapping("/{id}/deactivate")
+    public ResponseEntity<Void> deactivate(@PathVariable Integer id) {
+        service.deactivateById(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PutMapping("/{id}/reactivate")
+    public ResponseEntity<Product> reactivate(@PathVariable Integer id) {
+        return ResponseEntity.ok(service.reactivateById(id));
     }
 
     @DeleteMapping("/{id}")
