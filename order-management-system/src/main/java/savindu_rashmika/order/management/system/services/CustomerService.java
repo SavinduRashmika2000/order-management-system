@@ -12,6 +12,7 @@ import java.util.List;
 public class CustomerService {
 
     private final CustomerRepository repository;
+    private final FileStorageService fileStorageService;
 
     public List<Customer> findActive() {
         return repository.findByIsActiveTrue();
@@ -22,6 +23,14 @@ public class CustomerService {
     }
 
     public Customer save(Customer customer) {
+        try {
+            String imagePath = fileStorageService.saveImage(customer.getImage(), "customers");
+            if (imagePath != null) {
+                customer.setImage(imagePath);
+            }
+        } catch (Exception e) {
+            System.err.println("Failed to save customer image: " + e.getMessage());
+        }
         return repository.save(customer);
     }
 
@@ -43,7 +52,19 @@ public class CustomerService {
         existingCustomer.setEmail(updatedCustomer.getEmail());
         existingCustomer.setCity(updatedCustomer.getCity());
         existingCustomer.setAddress(updatedCustomer.getAddress());
-        existingCustomer.setImage(updatedCustomer.getImage());
+
+        // Only update image if a new base64 string is provided
+        if (updatedCustomer.getImage() != null && updatedCustomer.getImage().startsWith("data:image")) {
+            try {
+                String imagePath = fileStorageService.saveImage(updatedCustomer.getImage(), "customers");
+                if (imagePath != null) {
+                    existingCustomer.setImage(imagePath);
+                }
+            } catch (Exception e) {
+                System.err.println("Failed to update customer image: " + e.getMessage());
+            }
+        }
+
         existingCustomer.setLatitude(updatedCustomer.getLatitude());
         existingCustomer.setLongitude(updatedCustomer.getLongitude());
         existingCustomer.setGoogleMapLink(updatedCustomer.getGoogleMapLink());
