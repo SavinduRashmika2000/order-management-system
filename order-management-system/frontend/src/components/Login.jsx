@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import axios from 'axios';
+import api from '../services/api';
+
 import { useNavigate } from 'react-router-dom';
 
 const Login = () => {
@@ -12,13 +13,14 @@ const Login = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const response = await axios.post('http://localhost:9090/api/v1/auth/authenticate', {
+            const response = await api.post('/auth/authenticate', {
                 username,
                 password
             });
-            const { token, role } = response.data;
+            const { token, role, userId } = response.data;
             localStorage.setItem('token', token);
             localStorage.setItem('role', role);
+            localStorage.setItem('userId', userId);
 
             if (role === 'ADMIN') {
                 navigate('/admin');
@@ -35,8 +37,8 @@ const Login = () => {
     };
 
     return (
-        <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-600 to-indigo-900">
-            <div className="bg-white p-10 rounded-2xl shadow-2xl w-full max-w-md transform transition-all hover:scale-105">
+        <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-600 to-indigo-900 p-4">
+            <div className="bg-white p-6 sm:p-10 rounded-2xl shadow-2xl w-full max-w-md transform transition-all hover:scale-105">
                 <h2 className="text-3xl font-extrabold text-center text-gray-800 mb-8">Login</h2>
                 {error && <p className="text-red-500 text-sm mb-4 text-center">{error}</p>}
                 <form onSubmit={handleSubmit} className="space-y-6">
