@@ -20,6 +20,11 @@ public class CustomerController {
         return ResponseEntity.ok(service.findActive());
     }
 
+    @GetMapping("/active")
+    public ResponseEntity<List<Customer>> findActive() {
+        return ResponseEntity.ok(service.findActive());
+    }
+
     @GetMapping("/inactive")
     public ResponseEntity<List<Customer>> findInactive() {
         return ResponseEntity.ok(service.findInactive());

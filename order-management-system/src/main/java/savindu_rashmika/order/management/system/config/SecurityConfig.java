@@ -34,8 +34,10 @@ public class SecurityConfig {
                                 .csrf(AbstractHttpConfigurer::disable)
                                 .authorizeHttpRequests(auth -> auth
                                                 .requestMatchers("/api/v1/auth/**").permitAll()
+                                                .requestMatchers("/uploads/**").permitAll()
                                                 .requestMatchers("/error").permitAll()
                                                 .requestMatchers("/api/v1/users/**").hasAuthority("ADMIN")
+                                                .requestMatchers("/api/v1/dashboard/**").hasAnyAuthority("ADMIN", "REP")
                                                 .requestMatchers(HttpMethod.GET, "/api/v1/products/**")
                                                 .hasAnyAuthority("ADMIN", "REP")
                                                 .requestMatchers("/api/v1/products/**").hasAuthority("ADMIN")
@@ -44,6 +46,8 @@ public class SecurityConfig {
                                                 .hasAnyAuthority("ADMIN", "REP")
                                                 .requestMatchers(HttpMethod.POST, "/api/v1/orders/**")
                                                 .hasAnyAuthority("ADMIN", "REP")
+                                                .requestMatchers(HttpMethod.PUT, "/api/v1/orders/**")
+                                                .hasAuthority("ADMIN")
                                                 .requestMatchers("/api/v1/orders/**").hasAuthority("ADMIN")
                                                 .anyRequest().authenticated())
                                 .sessionManagement(session -> session

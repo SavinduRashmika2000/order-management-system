@@ -56,6 +56,11 @@ public class ProductController {
         return ResponseEntity.ok(service.reactivateById(id));
     }
 
+    @PutMapping("/{id}/add-stock")
+    public ResponseEntity<Product> addStock(@PathVariable Integer id, @RequestBody int amount) {
+        return ResponseEntity.ok(service.addStock(id, amount));
+    }
+
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteById(@PathVariable Integer id) {
         service.deleteById(id);
