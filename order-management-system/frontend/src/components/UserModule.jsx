@@ -100,12 +100,12 @@ const UserModule = ({ isAdmin }) => {
 
     return (
         <div className="p-8">
-            <div className="flex justify-between items-center mb-8">
-                <div className="flex items-center gap-4">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
+                <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 w-full sm:w-auto">
                     <h2 className="text-2xl font-bold text-slate-800">User Management</h2>
                     <button
                         onClick={() => setShowInactive(!showInactive)}
-                        className={`text-sm px-3 py-1.5 rounded-full border transition font-medium ${showInactive ? 'bg-slate-800 text-white border-slate-800' : 'bg-white text-slate-600 border-slate-300 hover:bg-slate-50'}`}
+                        className={`text-sm px-3 py-1.5 rounded-full border transition font-medium w-full sm:w-auto text-center ${showInactive ? 'bg-slate-800 text-white border-slate-800' : 'bg-white text-slate-600 border-slate-300 hover:bg-slate-50'}`}
                     >
                         {showInactive ? 'Showing Deactivated' : 'Show Deactivated'}
                     </button>
@@ -121,7 +121,7 @@ const UserModule = ({ isAdmin }) => {
                                 setShowAddForm(true);
                             }
                         }}
-                        className="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition shadow-sm font-medium"
+                        className="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition shadow-sm font-medium w-full sm:w-auto text-center"
                     >
                         {showAddForm ? 'Cancel' : '+ Add User'}
                     </button>
@@ -131,7 +131,7 @@ const UserModule = ({ isAdmin }) => {
             {error && <div className="bg-red-50 text-red-600 p-4 rounded-lg mb-6">{error}</div>}
 
             {showAddForm && !showInactive && isAdmin && (
-                <div className="bg-white p-6 rounded-xl shadow-sm border border-slate-200 mb-8">
+                <div className="bg-white p-4 sm:p-6 rounded-xl shadow-sm border border-slate-200 mb-8">
                     <h3 className="text-lg font-bold mb-6 text-slate-800 border-b pb-2">{editingUserId ? 'Edit User' : 'Add New User'}</h3>
                     <form onSubmit={handleAddUser} className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div className="flex flex-col gap-1.5">
@@ -192,65 +192,67 @@ const UserModule = ({ isAdmin }) => {
             )}
 
             <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
-                <table className="w-full text-left">
-                    <thead className="bg-slate-50 border-b border-slate-200">
-                        <tr>
-                            <th className="px-6 py-4 text-xs font-bold text-slate-400 uppercase">Name</th>
-                            <th className="px-6 py-4 text-xs font-bold text-slate-400 uppercase">Username</th>
-                            <th className="px-6 py-4 text-xs font-bold text-slate-400 uppercase">Role</th>
-                            {isAdmin && <th className="px-6 py-4 text-xs font-bold text-slate-400 uppercase">Actions</th>}
-                        </tr>
-                    </thead>
-                    <tbody className="divide-y divide-slate-200">
-                        {users.map(user => (
-                            <tr key={user.id} className="hover:bg-slate-50 transition">
-                                <td className="px-6 py-4">
-                                    <div className="flex items-center gap-4">
-                                        <div className="w-10 h-10 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-700 font-bold border border-indigo-200">
-                                            {user.name.charAt(0)}
-                                        </div>
-                                        <span className="font-medium text-slate-800 text-base">{user.name}</span>
-                                    </div>
-                                </td>
-                                <td className="px-6 py-4 text-slate-600">@{user.username}</td>
-                                <td className="px-6 py-4">
-                                    <span className={`px-3 py-1 text-xs font-bold rounded-full ${user.role === 'ADMIN' ? 'bg-purple-100 text-purple-700' : 'bg-blue-100 text-blue-700'}`}>
-                                        {user.role}
-                                    </span>
-                                </td>
-                                {isAdmin && (
+                <div className="overflow-x-auto">
+                    <table className="w-full text-left min-w-[500px]">
+                        <thead className="bg-slate-50 border-b border-slate-200">
+                            <tr>
+                                <th className="px-6 py-4 text-xs font-bold text-slate-400 uppercase">Name</th>
+                                <th className="px-6 py-4 text-xs font-bold text-slate-400 uppercase">Username</th>
+                                <th className="px-6 py-4 text-xs font-bold text-slate-400 uppercase">Role</th>
+                                {isAdmin && <th className="px-6 py-4 text-xs font-bold text-slate-400 uppercase">Actions</th>}
+                            </tr>
+                        </thead>
+                        <tbody className="divide-y divide-slate-200">
+                            {users.map(user => (
+                                <tr key={user.id} className="hover:bg-slate-50 transition">
                                     <td className="px-6 py-4">
-                                        <div className="flex gap-3 items-center">
-                                            {showInactive ? (
-                                                <button onClick={() => handleReactivateUser(user.id)} className="text-emerald-600 hover:text-emerald-800 text-sm font-bold bg-emerald-50 px-3 py-1.5 rounded-md transition hover:bg-emerald-100 shadow-sm border border-emerald-100 inline-flex items-center gap-1">
-                                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6" /></svg>
-                                                    Restore
-                                                </button>
-                                            ) : (
-                                                <>
-                                                    <button onClick={() => handleEditClick(user)} className="text-indigo-600 hover:text-indigo-800 text-sm font-bold">Edit</button>
-                                                    <button
-                                                        onClick={() => handleDeleteUser(user.id)}
-                                                        className="text-red-600 hover:text-red-800 text-sm font-bold ml-2"
-                                                    >
-                                                        Deactivate
-                                                    </button>
-                                                </>
-                                            )}
+                                        <div className="flex items-center gap-3 sm:gap-4">
+                                            <div className="w-10 h-10 rounded-full bg-indigo-100 flex-shrink-0 flex items-center justify-center text-indigo-700 font-bold border border-indigo-200">
+                                                {user.name.charAt(0)}
+                                            </div>
+                                            <span className="font-medium text-slate-800 text-sm sm:text-base">{user.name}</span>
                                         </div>
                                     </td>
-                                )}
-                            </tr>
-                        ))}
-                        {users.length === 0 && (
-                            <tr>
-                                <td colSpan={isAdmin ? "4" : "3"} className="px-6 py-10 text-center text-slate-400">
-                                    {showInactive ? 'No deactivated users found.' : 'No active users found.'}
-                                </td>
-                            </tr>
-                        )}
-                    </tbody>
-                </table>
+                                    <td className="px-6 py-4 text-slate-600 text-sm sm:text-base">@{user.username}</td>
+                                    <td className="px-6 py-4">
+                                        <span className={`px-2.5 sm:px-3 py-1 text-[10px] sm:text-xs font-bold rounded-full whitespace-nowrap ${user.role === 'ADMIN' ? 'bg-purple-100 text-purple-700' : 'bg-blue-100 text-blue-700'}`}>
+                                            {user.role}
+                                        </span>
+                                    </td>
+                                    {isAdmin && (
+                                        <td className="px-6 py-4">
+                                            <div className="flex gap-2 sm:gap-3 items-center">
+                                                {showInactive ? (
+                                                    <button onClick={() => handleReactivateUser(user.id)} className="text-emerald-600 hover:text-emerald-800 text-xs sm:text-sm font-bold bg-emerald-50 px-2 sm:px-3 py-1 sm:py-1.5 rounded-md transition hover:bg-emerald-100 shadow-sm border border-emerald-100 inline-flex items-center gap-1">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 hidden sm:block" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6" /></svg>
+                                                        Restore
+                                                    </button>
+                                                ) : (
+                                                    <>
+                                                        <button onClick={() => handleEditClick(user)} className="text-indigo-600 hover:text-indigo-800 text-sm font-bold">Edit</button>
+                                                        <button
+                                                            onClick={() => handleDeleteUser(user.id)}
+                                                            className="text-red-600 hover:text-red-800 text-sm font-bold ml-1 sm:ml-2"
+                                                        >
+                                                            Deactivate
+                                                        </button>
+                                                    </>
+                                                )}
+                                            </div>
+                                        </td>
+                                    )}
+                                </tr>
+                            ))}
+                            {users.length === 0 && (
+                                <tr>
+                                    <td colSpan={isAdmin ? "4" : "3"} className="px-6 py-10 text-center text-slate-400">
+                                        {showInactive ? 'No deactivated users found.' : 'No active users found.'}
+                                    </td>
+                                </tr>
+                            )}
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     );
