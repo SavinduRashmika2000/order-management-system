@@ -9,4 +9,6 @@ public interface CustomerRepository extends JpaRepository<Customer, Integer> {
     List<Customer> findByIsActiveTrue();
 
     List<Customer> findByIsActiveFalse();
+
+    long countByIsActiveTrue();
 }
