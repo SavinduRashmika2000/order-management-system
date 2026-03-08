@@ -1,6 +1,8 @@
 package savindu_rashmika.order.management.system.entities;
 
 import jakarta.persistence.*;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -31,6 +33,8 @@ public class Order {
 
     @ManyToOne
     @JoinColumn(name = "user_id")
+    @JsonIgnoreProperties({ "password", "authorities", "accountNonExpired", "accountNonLocked", "credentialsNonExpired",
+            "enabled", "role" })
     private User user;
 
     private LocalDateTime date;
@@ -38,5 +42,6 @@ public class Order {
     private String status;
 
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
+    @JsonManagedReference
     private List<OrderItem> orderItems;
 }

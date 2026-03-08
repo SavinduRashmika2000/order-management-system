@@ -8,6 +8,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import savindu_rashmika.order.management.system.entities.*;
 import savindu_rashmika.order.management.system.repositories.*;
 
+import org.springframework.jdbc.core.JdbcTemplate;
+
 import java.math.BigDecimal;
 
 @SpringBootApplication
@@ -22,8 +24,32 @@ public class OrderManagementSystemApplication {
 			UserRepository repository,
 			ProductRepository productRepository,
 			CustomerRepository customerRepository,
+			CategoryRepository categoryRepository,
+			JdbcTemplate jdbcTemplate,
 			PasswordEncoder passwordEncoder) {
 		return args -> {
+			// Categories
+			if (categoryRepository.count() == 0) {
+				categoryRepository.save(Category.builder().name("Electronics").build());
+				categoryRepository.save(Category.builder().name("Clothing").build());
+				categoryRepository.save(Category.builder().name("Home & Garden").build());
+				categoryRepository.save(Category.builder().name("Beauty").build());
+				categoryRepository.save(Category.builder().name("Sports").build());
+			}
+
+			// Force LONGTEXT for image column just in case ddl-auto didn't do it
+			try {
+				jdbcTemplate.execute("ALTER TABLE product MODIFY COLUMN image LONGTEXT");
+				System.out.println("Product table altered successfully: image column is now LONGTEXT");
+
+				jdbcTemplate.execute("ALTER TABLE _user MODIFY COLUMN role VARCHAR(20)");
+				System.out.println("User table altered successfully: role column is now VARCHAR(20)");
+			} catch (Exception e) {
+				System.err
+						.println("Note: Could not alter table (might already be correct or not using MySQL): "
+								+ e.getMessage());
+			}
+
 			// Users
 			if (repository.findByUsername("admin").isEmpty()) {
 				var admin = User.builder()
