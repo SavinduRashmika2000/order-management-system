@@ -153,7 +153,6 @@ const CustomerModule = ({ isAdmin }) => {
             googleMapLink: customer.googleMapLink || ''
         });
         setShowAddForm(true);
-        window.scrollTo({ top: 0, behavior: 'smooth' });
     };
 
     const handleReactivateCustomer = async (id) => {
@@ -182,7 +181,7 @@ const CustomerModule = ({ isAdmin }) => {
     if (loading) return <div className="p-8 text-center text-slate-500">Loading customers...</div>;
 
     return (
-        <div className="p-8 animate-fade-in">
+        <div className="p-8">
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
                 <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 w-full sm:w-auto">
                     <h2 className="text-2xl sm:text-3xl font-black text-slate-800 tracking-tight">Customer Network</h2>
@@ -216,167 +215,182 @@ const CustomerModule = ({ isAdmin }) => {
             {error && <div className="bg-red-50 text-red-600 p-4 rounded-xl mb-6 font-bold border border-red-100">{error}</div>}
 
             {showAddForm && !showInactive && (
-                <div className="glass-card p-4 sm:p-8 mb-10 staggered-list">
-                    <h3 className="text-xl font-black mb-8 text-slate-800 border-b border-slate-100 pb-4">{editingCustomerId ? 'Edit Profile' : 'New Customer Profile'}</h3>
-                    <form onSubmit={handleAddCustomer} className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                        <div className="flex flex-col gap-2">
-                            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Shop Name</label>
-                            <input
-                                type="text"
-                                name="shopName"
-                                placeholder="e.g. Super Mart"
-                                value={newCustomer.shopName || ''}
-                                onChange={handleInputChange}
-                                className="bg-slate-50/50 border border-slate-200 p-3 rounded-xl focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition-all font-medium"
-                                required
-                            />
-                        </div>
-                        <div className="flex flex-col gap-2">
-                            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Owner Name</label>
-                            <input
-                                type="text"
-                                name="ownerName"
-                                placeholder="e.g. John Doe"
-                                value={newCustomer.ownerName || ''}
-                                onChange={handleInputChange}
-                                className="bg-slate-50/50 border border-slate-200 p-3 rounded-xl focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition-all font-medium"
-                                required
-                            />
-                        </div>
-                        <div className="flex flex-col gap-2">
-                            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Phone Number</label>
-                            <input
-                                type="text"
-                                name="phoneNo"
-                                placeholder="e.g. +94..."
-                                value={newCustomer.phoneNo || ''}
-                                onChange={handleInputChange}
-                                className="bg-slate-50/50 border border-slate-200 p-3 rounded-xl focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition-all font-medium"
-                                required
-                            />
-                        </div>
-                        <div className="flex flex-col gap-2">
-                            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Email Address</label>
-                            <input
-                                type="email"
-                                name="email"
-                                placeholder="e.g. customer@example.com"
-                                value={newCustomer.email || ''}
-                                onChange={handleInputChange}
-                                className="bg-slate-50/50 border border-slate-200 p-3 rounded-xl focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition-all font-medium"
-                                required
-                            />
-                        </div>
-                        <div className="flex flex-col gap-2">
-                            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">City</label>
-                            <input
-                                type="text"
-                                name="city"
-                                placeholder="e.g. Colombo"
-                                value={newCustomer.city || ''}
-                                onChange={handleInputChange}
-                                className="bg-slate-50/50 border border-slate-200 p-3 rounded-xl focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition-all font-medium"
-                                required
-                            />
-                        </div>
-                        <div className="flex flex-col gap-2 md:col-span-2">
-                            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Full Address</label>
-                            <input
-                                type="text"
-                                name="address"
-                                placeholder="Enter full address"
-                                value={newCustomer.address || ''}
-                                onChange={handleInputChange}
-                                className="bg-slate-50/50 border border-slate-200 p-3 rounded-xl focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition-all font-medium"
-                                required
-                            />
-                        </div>
-                        <div className="md:col-span-2 space-y-6">
-                            <div className="flex flex-col gap-3">
-                                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Upload Shop Photo</label>
-                                <div className="flex flex-col sm:flex-row items-start sm:items-center gap-6">
-                                    {newCustomer.image ? (
-                                        <>
-                                            <div className="w-20 h-20 rounded-2xl overflow-hidden border-2 border-indigo-100 flex-shrink-0 shadow-lg shadow-indigo-500/5">
-                                                <img src={getImageUrl(newCustomer.image)} alt="Preview" className="w-full h-full object-cover" />
-                                            </div>
-                                            <div className="flex flex-col gap-2">
-                                                <label className="cursor-pointer text-xs font-black uppercase tracking-tighter text-indigo-700 bg-indigo-50 px-4 py-2 rounded-lg hover:bg-indigo-100 transition whitespace-nowrap">
-                                                    Change Image
+                <div
+                    className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4 z-[60] cursor-pointer"
+                    onClick={() => setShowAddForm(false)}
+                >
+                    <div
+                        className="bg-white p-4 sm:p-8 rounded-2xl shadow-2xl border border-slate-200 max-w-4xl w-full max-h-[90vh] overflow-y-auto cursor-default relative"
+                        onClick={(e) => e.stopPropagation()}
+                    >
+                        <button
+                            onClick={() => setShowAddForm(false)}
+                            className="absolute top-4 right-4 text-slate-400 hover:text-slate-600 bg-slate-50 p-2 rounded-full hover:rotate-90 transition transform duration-300"
+                        >
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
+                        </button>
+
+                        <h3 className="text-xl font-bold mb-8 text-slate-800 border-b pb-4">{editingCustomerId ? 'Edit Customer' : 'Add New Customer'}</h3>
+                        <form onSubmit={handleAddCustomer} className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                            <div className="flex flex-col gap-2">
+                                <label className="text-sm font-bold text-slate-700 ml-1 font-sans tracking-normal uppercase-none">Shop Name</label>
+                                <input
+                                    type="text"
+                                    name="shopName"
+                                    placeholder="e.g. Super Mart"
+                                    value={newCustomer.shopName || ''}
+                                    onChange={handleInputChange}
+                                    className="bg-slate-50 border border-slate-200 p-3 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none"
+                                    required
+                                />
+                            </div>
+                            <div className="flex flex-col gap-2">
+                                <label className="text-sm font-bold text-slate-700 ml-1 font-sans tracking-normal uppercase-none">Owner Name</label>
+                                <input
+                                    type="text"
+                                    name="ownerName"
+                                    placeholder="e.g. John Doe"
+                                    value={newCustomer.ownerName || ''}
+                                    onChange={handleInputChange}
+                                    className="bg-slate-50 border border-slate-200 p-3 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none"
+                                    required
+                                />
+                            </div>
+                            <div className="flex flex-col gap-2">
+                                <label className="text-sm font-bold text-slate-700 ml-1 font-sans tracking-normal uppercase-none">Phone Number</label>
+                                <input
+                                    type="text"
+                                    name="phoneNo"
+                                    placeholder="e.g. +94..."
+                                    value={newCustomer.phoneNo || ''}
+                                    onChange={handleInputChange}
+                                    className="bg-slate-50 border border-slate-200 p-3 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none"
+                                    required
+                                />
+                            </div>
+                            <div className="flex flex-col gap-2">
+                                <label className="text-sm font-bold text-slate-700 ml-1 font-sans tracking-normal uppercase-none">Email Address</label>
+                                <input
+                                    type="email"
+                                    name="email"
+                                    placeholder="e.g. customer@example.com"
+                                    value={newCustomer.email || ''}
+                                    onChange={handleInputChange}
+                                    className="bg-slate-50 border border-slate-200 p-3 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none"
+                                    required
+                                />
+                            </div>
+                            <div className="flex flex-col gap-2">
+                                <label className="text-sm font-bold text-slate-700 ml-1 font-sans tracking-normal uppercase-none">City</label>
+                                <input
+                                    type="text"
+                                    name="city"
+                                    placeholder="e.g. Colombo"
+                                    value={newCustomer.city || ''}
+                                    onChange={handleInputChange}
+                                    className="bg-slate-50 border border-slate-200 p-3 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none"
+                                    required
+                                />
+                            </div>
+                            <div className="flex flex-col gap-2 md:col-span-2">
+                                <label className="text-sm font-bold text-slate-700 ml-1 font-sans tracking-normal uppercase-none">Full Address</label>
+                                <input
+                                    type="text"
+                                    name="address"
+                                    placeholder="Enter full address"
+                                    value={newCustomer.address || ''}
+                                    onChange={handleInputChange}
+                                    className="bg-slate-50 border border-slate-200 p-3 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none"
+                                    required
+                                />
+                            </div>
+                            <div className="md:col-span-2 space-y-6">
+                                <div className="flex flex-col gap-3">
+                                    <label className="text-sm font-bold text-slate-700 ml-1">Upload Shop Photo</label>
+                                    <div className="flex flex-col sm:flex-row items-start sm:items-center gap-6">
+                                        {newCustomer.image ? (
+                                            <>
+                                                <div className="w-20 h-20 rounded-2xl overflow-hidden border-2 border-indigo-100 flex-shrink-0 shadow-lg shadow-indigo-500/5">
+                                                    <img src={getImageUrl(newCustomer.image)} alt="Preview" className="w-full h-full object-cover" />
+                                                </div>
+                                                <div className="flex flex-col gap-2">
+                                                    <label className="cursor-pointer text-xs font-bold text-indigo-700 bg-indigo-50 px-4 py-2 rounded-lg hover:bg-indigo-100 transition whitespace-nowrap text-center">
+                                                        Change Image
+                                                        <input type="file" accept="image/*" onChange={handleFileChange} className="hidden" />
+                                                    </label>
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => setNewCustomer(prev => ({ ...prev, image: '' }))}
+                                                        className="text-[10px] font-bold text-red-600 bg-red-50 px-4 py-2 rounded-lg hover:bg-red-100 transition"
+                                                    >
+                                                        Remove
+                                                    </button>
+                                                </div>
+                                            </>
+                                        ) : (
+                                            <div className="w-full">
+                                                <label className="flex flex-col items-center justify-center border-2 border-dashed border-slate-200 rounded-2xl p-6 hover:border-indigo-400 hover:bg-indigo-50/30 transition cursor-pointer group">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-slate-300 group-hover:text-indigo-400 transition" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" /></svg>
+                                                    <span className="mt-2 text-xs font-bold text-slate-400 group-hover:text-indigo-600 transition">Drop an image here or click to browse</span>
                                                     <input type="file" accept="image/*" onChange={handleFileChange} className="hidden" />
                                                 </label>
-                                                <button
-                                                    type="button"
-                                                    onClick={() => setNewCustomer(prev => ({ ...prev, image: '' }))}
-                                                    className="text-[10px] font-black uppercase tracking-tighter text-red-600 bg-red-50 px-4 py-2 rounded-lg hover:bg-red-100 transition"
-                                                >
-                                                    Remove
-                                                </button>
                                             </div>
-                                        </>
-                                    ) : (
-                                        <div className="w-full">
-                                            <label className="flex flex-col items-center justify-center border-2 border-dashed border-slate-200 rounded-2xl p-6 hover:border-indigo-400 hover:bg-indigo-50/30 transition cursor-pointer group">
-                                                <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-slate-300 group-hover:text-indigo-400 transition" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" /></svg>
-                                                <span className="mt-2 text-xs font-bold text-slate-400 group-hover:text-indigo-600 transition">Drop an image here or click to browse</span>
-                                                <input type="file" accept="image/*" onChange={handleFileChange} className="hidden" />
-                                            </label>
-                                        </div>
-                                    )}
+                                        )}
+                                    </div>
+                                </div>
+
+                                <div className="flex flex-col gap-4 bg-slate-50 p-4 sm:p-6 rounded-2xl border border-slate-100">
+                                    <label className="text-sm font-bold text-slate-700 ml-1">Precise Location (GPS)</label>
+                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                        <input
+                                            type="text"
+                                            name="latitude"
+                                            placeholder="Latitude"
+                                            value={newCustomer.latitude || ''}
+                                            onChange={handleInputChange}
+                                            className="bg-white border border-slate-200 p-3 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none transition-all font-mono text-sm"
+                                        />
+                                        <input
+                                            type="text"
+                                            name="longitude"
+                                            placeholder="Longitude"
+                                            value={newCustomer.longitude || ''}
+                                            onChange={handleInputChange}
+                                            className="bg-white border border-slate-200 p-3 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none transition-all font-mono text-sm"
+                                        />
+                                    </div>
+                                    <button
+                                        type="button"
+                                        onClick={fetchGPSLocation}
+                                        disabled={fetchingLocation}
+                                        className="bg-white text-slate-600 px-4 py-3 rounded-xl hover:bg-slate-50 transition font-bold text-[10px] uppercase tracking-widest flex items-center justify-center gap-2 border border-slate-200 shadow-sm"
+                                    >
+                                        {fetchingLocation ? (
+                                            <span className="inline-block animate-spin h-3 w-3 border-2 border-slate-400 border-t-transparent rounded-full"></span>
+                                        ) : (
+                                            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+                                        )}
+                                        Auto-detect Location
+                                    </button>
+                                    <div>
+                                        <label className="text-sm font-bold text-slate-700 ml-1 mb-2 block font-sans tracking-normal uppercase-none">Google Maps Deep Link</label>
+                                        <input
+                                            type="text"
+                                            name="googleMapLink"
+                                            placeholder="Paste share link from Maps"
+                                            value={newCustomer.googleMapLink || ''}
+                                            onChange={handleInputChange}
+                                            className="bg-white border border-slate-200 p-3 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none transition-all font-medium text-sm w-full"
+                                        />
+                                    </div>
                                 </div>
                             </div>
 
-                            <div className="flex flex-col gap-4 bg-slate-50/50 p-4 sm:p-6 rounded-2xl border border-slate-100">
-                                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Precise Location (GPS)</label>
-                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                    <input
-                                        type="text"
-                                        name="latitude"
-                                        placeholder="Latitude"
-                                        value={newCustomer.latitude || ''}
-                                        onChange={handleInputChange}
-                                        className="bg-white border border-slate-200 p-3 rounded-xl focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition-all font-mono text-sm"
-                                    />
-                                    <input
-                                        type="text"
-                                        name="longitude"
-                                        placeholder="Longitude"
-                                        value={newCustomer.longitude || ''}
-                                        onChange={handleInputChange}
-                                        className="bg-white border border-slate-200 p-3 rounded-xl focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition-all font-mono text-sm"
-                                    />
-                                </div>
-                                <button
-                                    type="button"
-                                    onClick={fetchGPSLocation}
-                                    disabled={fetchingLocation}
-                                    className="bg-white text-slate-600 px-4 py-3 rounded-xl hover:bg-slate-50 transition font-black text-[10px] uppercase tracking-widest flex items-center justify-center gap-2 border border-slate-200 shadow-sm"
-                                >
-                                    {fetchingLocation ? (
-                                        <span className="inline-block animate-spin h-3 w-3 border-2 border-slate-400 border-t-transparent rounded-full"></span>
-                                    ) : (
-                                        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
-                                    )}
-                                    Auto-detect Location
-                                </button>
-                                <div>
-                                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1 mb-2 block">Google Maps Deep Link</label>
-                                    <input
-                                        type="text"
-                                        name="googleMapLink"
-                                        placeholder="Paste share link from Maps"
-                                        value={newCustomer.googleMapLink || ''}
-                                        onChange={handleInputChange}
-                                        className="bg-white border border-slate-200 p-3 rounded-xl focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition-all font-medium text-sm w-full"
-                                    />
-                                </div>
-                            </div>
-                        </div>
-
-                        <button type="submit" className="premium-button bg-indigo-600 text-white md:col-span-2 py-4">
-                            {editingCustomerId ? 'Update Profile' : 'Registry Customer'}
-                        </button>
-                    </form>
+                            <button type="submit" className="premium-button bg-indigo-600 text-white md:col-span-2 py-4">
+                                {editingCustomerId ? 'Update Profile' : 'Registry Customer'}
+                            </button>
+                        </form>
+                    </div>
                 </div>
             )}
 

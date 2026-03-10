@@ -130,64 +130,78 @@ const UserModule = ({ isAdmin }) => {
 
             {error && <div className="bg-red-50 text-red-600 p-4 rounded-lg mb-6">{error}</div>}
 
-            {showAddForm && !showInactive && isAdmin && (
-                <div className="bg-white p-4 sm:p-6 rounded-xl shadow-sm border border-slate-200 mb-8">
-                    <h3 className="text-lg font-bold mb-6 text-slate-800 border-b pb-2">{editingUserId ? 'Edit User' : 'Add New User'}</h3>
-                    <form onSubmit={handleAddUser} className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div className="flex flex-col gap-1.5">
-                            <label className="text-sm font-bold text-slate-700 ml-1">Full Name</label>
-                            <input
-                                type="text"
-                                name="name"
-                                placeholder="Enter full name"
-                                value={newUser.name || ''}
-                                onChange={handleInputChange}
-                                className="bg-slate-50 border border-slate-200 p-2.5 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none"
-                                required
-                            />
-                        </div>
-                        <div className="flex flex-col gap-1.5">
-                            <label className="text-sm font-bold text-slate-700 ml-1">Username</label>
-                            <input
-                                type="text"
-                                name="username"
-                                placeholder="Enter username"
-                                value={newUser.username || ''}
-                                onChange={handleInputChange}
-                                className="bg-slate-50 border border-slate-200 p-2.5 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none"
-                                required
-                            />
-                        </div>
-                        <div className="flex flex-col gap-1.5">
-                            <label className="text-sm font-bold text-slate-700 ml-1">Role</label>
-                            <select
-                                name="role"
-                                value={newUser.role || 'REP'}
-                                onChange={handleInputChange}
-                                className="bg-slate-50 border border-slate-200 p-2.5 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none font-medium text-slate-700"
-                                required
-                            >
-                                <option value="REP">Sales Representative</option>
-                                <option value="ADMIN">Administrator</option>
-                            </select>
-                        </div>
-                        <div className="flex flex-col gap-1.5">
-                            <label className="text-sm font-bold text-slate-700 ml-1">Password</label>
-                            <input
-                                type="password"
-                                name="password"
-                                placeholder={editingUserId ? "Leave blank to keep current" : "Enter password"}
-                                value={newUser.password || ''}
-                                onChange={handleInputChange}
-                                className="bg-slate-50 border border-slate-200 p-2.5 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none"
-                                required={!editingUserId}
-                            />
-                        </div>
-
-                        <button type="submit" className="bg-indigo-600 text-white p-3 rounded-lg hover:bg-indigo-700 transition font-bold md:col-span-2 mt-2 shadow-md">
-                            {editingUserId ? 'Update User' : 'Save User'}
+            {showAddForm && !showInactive && (
+                <div
+                    className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4 z-[60] cursor-pointer"
+                    onClick={() => setShowAddForm(false)}
+                >
+                    <div
+                        className="bg-white p-4 sm:p-8 rounded-2xl shadow-2xl border border-slate-200 max-w-lg w-full cursor-default relative"
+                        onClick={(e) => e.stopPropagation()}
+                    >
+                        <button
+                            onClick={() => setShowAddForm(false)}
+                            className="absolute top-4 right-4 text-slate-400 hover:text-slate-600 bg-slate-50 p-2 rounded-full hover:rotate-90 transition transform duration-300"
+                        >
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
                         </button>
-                    </form>
+
+                        <h3 className="text-xl font-bold mb-8 text-slate-800 border-b pb-4">{editingUserId ? 'Edit User' : 'Add New User'}</h3>
+                        <form onSubmit={handleAddUser} className="space-y-6">
+                            <div className="flex flex-col gap-2">
+                                <label className="text-sm font-bold text-slate-700 ml-1">Full Name</label>
+                                <input
+                                    type="text"
+                                    name="name"
+                                    placeholder="Enter full name"
+                                    value={newUser.name || ''}
+                                    onChange={handleInputChange}
+                                    className="bg-slate-50 border border-slate-200 p-3 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none"
+                                    required
+                                />
+                            </div>
+                            <div className="flex flex-col gap-2">
+                                <label className="text-sm font-bold text-slate-700 ml-1">Username</label>
+                                <input
+                                    type="text"
+                                    name="username"
+                                    placeholder="Choose a username"
+                                    value={newUser.username || ''}
+                                    onChange={handleInputChange}
+                                    className="bg-slate-50 border border-slate-200 p-3 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none"
+                                    required
+                                />
+                            </div>
+                            <div className="flex flex-col gap-2">
+                                <label className="text-sm font-bold text-slate-700 ml-1">{editingUserId ? 'New Password (Optional)' : 'Password'}</label>
+                                <input
+                                    type="password"
+                                    name="password"
+                                    placeholder={editingUserId ? "Leave blank to keep current" : "Enter password"}
+                                    value={newUser.password || ''}
+                                    onChange={handleInputChange}
+                                    className="bg-slate-50 border border-slate-200 p-3 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none"
+                                    required={!editingUserId}
+                                />
+                            </div>
+                            <div className="flex flex-col gap-2">
+                                <label className="text-sm font-bold text-slate-700 ml-1">Access Role</label>
+                                <select
+                                    name="role"
+                                    value={newUser.role || 'REP'}
+                                    onChange={handleInputChange}
+                                    className="bg-slate-50 border border-slate-200 p-3 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none font-bold"
+                                    required
+                                >
+                                    <option value="ADMIN">ADMIN (Full Access)</option>
+                                    <option value="REP">REP (Limited Access)</option>
+                                </select>
+                            </div>
+                            <button type="submit" className="bg-indigo-600 text-white w-full py-4 rounded-2xl hover:bg-indigo-700 transition font-bold mt-4 shadow-lg shadow-indigo-200 tracking-wide uppercase text-sm">
+                                {editingUserId ? 'Update User Account' : 'Register User'}
+                            </button>
+                        </form>
+                    </div>
                 </div>
             )}
 

@@ -12,7 +12,7 @@ import java.util.List;
 public class CustomerService {
 
     private final CustomerRepository repository;
-    private final FileStorageService fileStorageService;
+    private final ImageUploadService imageUploadService;
 
     public List<Customer> findActive() {
         return repository.findByIsActiveTrue();
@@ -24,7 +24,7 @@ public class CustomerService {
 
     public Customer save(Customer customer) {
         try {
-            String imagePath = fileStorageService.saveImage(customer.getImage(), "customers");
+            String imagePath = imageUploadService.uploadImage(customer.getImage(), "customers");
             if (imagePath != null) {
                 customer.setImage(imagePath);
             }
@@ -56,7 +56,7 @@ public class CustomerService {
         // Only update image if a new base64 string is provided
         if (updatedCustomer.getImage() != null && updatedCustomer.getImage().startsWith("data:image")) {
             try {
-                String imagePath = fileStorageService.saveImage(updatedCustomer.getImage(), "customers");
+                String imagePath = imageUploadService.uploadImage(updatedCustomer.getImage(), "customers");
                 if (imagePath != null) {
                     existingCustomer.setImage(imagePath);
                 }

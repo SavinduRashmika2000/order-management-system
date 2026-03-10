@@ -8,7 +8,7 @@ const api = axios.create({
 
 const getImageUrl = (path) => {
     if (!path) return null;
-    if (path.startsWith('data:image')) return path;
+    if (path.startsWith('data:image') || path.startsWith('http')) return path;
     return `${API_BASE_URL}${path}`;
 };
 

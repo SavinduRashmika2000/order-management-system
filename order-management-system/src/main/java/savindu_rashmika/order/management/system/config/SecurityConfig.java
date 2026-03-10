@@ -33,6 +33,12 @@ public class SecurityConfig {
                                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                                 .csrf(AbstractHttpConfigurer::disable)
                                 .authorizeHttpRequests(auth -> auth
+                                                .requestMatchers(
+                                                        "/",
+                                                        "/index.html",
+                                                        "/assets/**",
+                                                        "/favicon.ico"
+                                                ).permitAll()
                                                 .requestMatchers("/api/v1/auth/**").permitAll()
                                                 .requestMatchers("/uploads/**").permitAll()
                                                 .requestMatchers("/error").permitAll()

@@ -265,119 +265,135 @@ const ProductModule = ({ isAdmin }) => {
             {error && <div className="bg-red-50 text-red-600 p-4 rounded-lg mb-6">{error}</div>}
 
             {showAddForm && !showHidden && (
-                <div className="bg-white p-4 sm:p-6 rounded-xl shadow-sm border border-slate-200 mb-8">
-                    <h3 className="text-lg font-bold mb-6 text-slate-800 border-b pb-2">{editingProductId ? 'Edit Product' : 'Add New Product'}</h3>
-                    <form onSubmit={handleAddProduct} className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div className="flex flex-col gap-1.5">
-                            <label className="text-sm font-bold text-slate-700 ml-1">Product Name</label>
-                            <input
-                                type="text"
-                                name="name"
-                                placeholder="Enter product name"
-                                value={newProduct.name || ''}
-                                onChange={handleInputChange}
-                                className="bg-slate-50 border border-slate-200 p-2.5 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none"
-                                required
-                            />
-                        </div>
-                        <div className="flex flex-col gap-1.5">
-                            <label className="text-sm font-bold text-slate-700 ml-1">Category</label>
-                            <div className="flex gap-2">
-                                <select
-                                    name="category"
-                                    value={newProduct.category || ''}
+                <div
+                    className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4 z-[60] cursor-pointer"
+                    onClick={() => setShowAddForm(false)}
+                >
+                    <div
+                        className="bg-white p-4 sm:p-8 rounded-2xl shadow-2xl border border-slate-200 max-w-4xl w-full max-h-[90vh] overflow-y-auto cursor-default relative"
+                        onClick={(e) => e.stopPropagation()}
+                    >
+                        <button
+                            onClick={() => setShowAddForm(false)}
+                            className="absolute top-4 right-4 text-slate-400 hover:text-slate-600 bg-slate-50 p-2 rounded-full hover:rotate-90 transition transform duration-300"
+                        >
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
+                        </button>
+
+                        <h3 className="text-xl font-bold mb-8 text-slate-800 border-b pb-4">{editingProductId ? 'Edit Product' : 'Add New Product'}</h3>
+                        <form onSubmit={handleAddProduct} className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                            <div className="flex flex-col gap-2">
+                                <label className="text-sm font-bold text-slate-700 ml-1">Product Name</label>
+                                <input
+                                    type="text"
+                                    name="name"
+                                    placeholder="Enter product name"
+                                    value={newProduct.name || ''}
                                     onChange={handleInputChange}
-                                    className="flex-1 bg-slate-50 border border-slate-200 p-2.5 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none"
+                                    className="bg-slate-50 border border-slate-200 p-3 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none"
                                     required
-                                >
-                                    <option value="">Select Category</option>
-                                    {categories.map(cat => (
-                                        <option key={cat.id} value={cat.name}>{cat.name}</option>
-                                    ))}
-                                </select>
-                                <button
-                                    type="button"
-                                    onClick={() => setShowCategoryModal(true)}
-                                    className="bg-indigo-50 text-indigo-700 px-3 rounded-lg hover:bg-indigo-100 transition border border-indigo-200"
-                                    title="Add New Category"
-                                >
-                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" /></svg>
-                                </button>
+                                />
                             </div>
-                        </div>
-                        <div className="flex flex-col gap-1.5">
-                            <label className="text-sm font-bold text-slate-700 ml-1">Stock Quantity</label>
-                            <input
-                                type="number"
-                                name="quantity"
-                                placeholder="0"
-                                value={newProduct.quantity || ''}
-                                onChange={handleInputChange}
-                                className="bg-slate-50 border border-slate-200 p-2.5 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none"
-                                required
-                            />
-                        </div>
-                        <div className="flex flex-col gap-1.5">
-                            <label className="text-sm font-bold text-slate-700 ml-1">Price ($)</label>
-                            <input
-                                type="number"
-                                step="0.01"
-                                name="price"
-                                placeholder="0.00"
-                                value={newProduct.price || ''}
-                                onChange={handleInputChange}
-                                className="bg-slate-50 border border-slate-200 p-2.5 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none"
-                                required
-                            />
-                        </div>
-                        <div className="flex flex-col gap-1.5">
-                            <label className="text-sm font-bold text-slate-700 ml-1">Discount (%)</label>
-                            <input
-                                type="number"
-                                step="0.1"
-                                name="discount"
-                                placeholder="0.0"
-                                value={newProduct.discount || ''}
-                                onChange={handleInputChange}
-                                className="bg-slate-50 border border-slate-200 p-2.5 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none"
-                            />
-                        </div>
-                        <div className="md:col-span-2 flex flex-col gap-2 mt-2">
-                            <label className="text-sm font-bold text-slate-700 ml-1">Product Image</label>
-                            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
-                                {newProduct.image ? (
-                                    <>
-                                        <div className="w-20 h-20 rounded-lg overflow-hidden border border-slate-200 flex-shrink-0">
-                                            <img src={getImageUrl(newProduct.image)} alt="Preview" className="w-full h-full object-cover" />
-                                        </div>
-                                        <div className="flex flex-col gap-2 w-full sm:w-auto">
-                                            <label className="cursor-pointer text-sm font-semibold text-indigo-700 bg-indigo-50 px-4 py-2 rounded-lg hover:bg-indigo-100 transition text-center">
-                                                Change
+                            <div className="flex flex-col gap-2">
+                                <label className="text-sm font-bold text-slate-700 ml-1">Category</label>
+                                <div className="flex gap-2">
+                                    <select
+                                        name="category"
+                                        value={newProduct.category || ''}
+                                        onChange={handleInputChange}
+                                        className="flex-1 bg-slate-50 border border-slate-200 p-3 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none"
+                                        required
+                                    >
+                                        <option value="">Select Category</option>
+                                        {categories.map(cat => (
+                                            <option key={cat.id} value={cat.name}>{cat.name}</option>
+                                        ))}
+                                    </select>
+                                    <button
+                                        type="button"
+                                        onClick={() => setShowCategoryModal(true)}
+                                        className="bg-indigo-50 text-indigo-700 px-4 rounded-xl hover:bg-indigo-100 transition border border-indigo-200"
+                                        title="Add New Category"
+                                    >
+                                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" /></svg>
+                                    </button>
+                                </div>
+                            </div>
+                            <div className="flex flex-col gap-2">
+                                <label className="text-sm font-bold text-slate-700 ml-1">Stock Quantity</label>
+                                <input
+                                    type="number"
+                                    name="quantity"
+                                    placeholder="0"
+                                    value={newProduct.quantity || ''}
+                                    onChange={handleInputChange}
+                                    className="bg-slate-50 border border-slate-200 p-3 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none"
+                                    required
+                                />
+                            </div>
+                            <div className="flex flex-col gap-2">
+                                <label className="text-sm font-bold text-slate-700 ml-1">Price ($)</label>
+                                <input
+                                    type="number"
+                                    step="0.01"
+                                    name="price"
+                                    placeholder="0.00"
+                                    value={newProduct.price || ''}
+                                    onChange={handleInputChange}
+                                    className="bg-slate-50 border border-slate-200 p-3 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none"
+                                    required
+                                />
+                            </div>
+                            <div className="flex flex-col gap-2">
+                                <label className="text-sm font-bold text-slate-700 ml-1">Discount (%)</label>
+                                <input
+                                    type="number"
+                                    step="0.1"
+                                    name="discount"
+                                    placeholder="0.0"
+                                    value={newProduct.discount || ''}
+                                    onChange={handleInputChange}
+                                    className="bg-slate-50 border border-slate-200 p-3 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none"
+                                />
+                            </div>
+                            <div className="md:col-span-2 flex flex-col gap-3 mt-4">
+                                <label className="text-sm font-bold text-slate-700 ml-1">Product Image</label>
+                                <div className="flex flex-col sm:flex-row items-start sm:items-center gap-6">
+                                    {newProduct.image ? (
+                                        <>
+                                            <div className="w-24 h-24 rounded-2xl overflow-hidden border border-slate-200 flex-shrink-0 shadow-lg">
+                                                <img src={getImageUrl(newProduct.image)} alt="Preview" className="w-full h-full object-cover" />
+                                            </div>
+                                            <div className="flex flex-col gap-2 w-full sm:w-auto">
+                                                <label className="cursor-pointer text-sm font-bold text-indigo-700 bg-indigo-50 px-6 py-3 rounded-xl hover:bg-indigo-100 transition text-center border border-indigo-100">
+                                                    Change Image
+                                                    <input type="file" accept="image/*" onChange={handleFileChange} className="hidden" />
+                                                </label>
+                                                <button
+                                                    type="button"
+                                                    onClick={() => setNewProduct(prev => ({ ...prev, image: '' }))}
+                                                    className="text-sm font-bold text-red-600 bg-red-50 px-6 py-3 rounded-xl hover:bg-red-100 transition text-center border border-red-100"
+                                                >
+                                                    Remove Image
+                                                </button>
+                                            </div>
+                                        </>
+                                    ) : (
+                                        <div className="w-full">
+                                            <label className="flex flex-col items-center justify-center border-2 border-dashed border-slate-200 rounded-2xl p-8 hover:border-indigo-400 hover:bg-indigo-50/30 transition cursor-pointer group">
+                                                <svg xmlns="http://www.w3.org/2000/svg" className="h-10 w-10 text-slate-300 group-hover:text-indigo-400 transition" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
+                                                <span className="mt-2 text-sm font-bold text-slate-400 group-hover:text-indigo-600 transition">Click to upload product image</span>
                                                 <input type="file" accept="image/*" onChange={handleFileChange} className="hidden" />
                                             </label>
-                                            <button
-                                                type="button"
-                                                onClick={() => setNewProduct(prev => ({ ...prev, image: '' }))}
-                                                className="text-sm font-semibold text-red-600 bg-red-50 px-4 py-2 rounded-lg hover:bg-red-100 transition text-center"
-                                            >
-                                                Remove
-                                            </button>
                                         </div>
-                                    </>
-                                ) : (
-                                    <input
-                                        type="file"
-                                        accept="image/*"
-                                        onChange={handleFileChange}
-                                        className="text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100"
-                                    />
-                                )}
+                                    )}
+                                </div>
                             </div>
-                        </div>
-                        <button type="submit" className="bg-indigo-600 text-white p-2.5 rounded-lg hover:bg-indigo-700 transition font-bold md:col-span-2 mt-4">
-                            {editingProductId ? 'Update Product' : 'Save Product'}
-                        </button>
-                    </form>
+                            <button type="submit" className="bg-indigo-600 text-white py-4 rounded-2xl hover:bg-indigo-700 transition font-bold md:col-span-2 mt-6 shadow-lg shadow-indigo-200">
+                                {editingProductId ? 'Update Product Information' : 'Save New Product'}
+                            </button>
+                        </form>
+                    </div>
                 </div>
             )}
 

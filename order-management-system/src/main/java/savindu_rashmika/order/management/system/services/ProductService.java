@@ -12,7 +12,7 @@ import java.util.List;
 public class ProductService {
 
     private final ProductRepository repository;
-    private final FileStorageService fileStorageService;
+    private final ImageUploadService imageUploadService;
 
     public List<Product> findAll() {
         return repository.findAll();
@@ -27,7 +27,7 @@ public class ProductService {
             product.setStatus("ACTIVE");
         }
         try {
-            String imagePath = fileStorageService.saveImage(product.getImage(), "products");
+            String imagePath = imageUploadService.uploadImage(product.getImage(), "products");
             if (imagePath != null) {
                 product.setImage(imagePath);
             }
@@ -50,7 +50,7 @@ public class ProductService {
         // Only update image if a new base64 string is provided
         if (updatedProduct.getImage() != null && updatedProduct.getImage().startsWith("data:image")) {
             try {
-                String imagePath = fileStorageService.saveImage(updatedProduct.getImage(), "products");
+                String imagePath = imageUploadService.uploadImage(updatedProduct.getImage(), "products");
                 if (imagePath != null) {
                     existingProduct.setImage(imagePath);
                 }
