@@ -21,6 +21,7 @@ const CustomerModule = ({ isAdmin }) => {
         googleMapLink: ''
     });
     const [fetchingLocation, setFetchingLocation] = useState(false);
+    const [isSaving, setIsSaving] = useState(false);
     const [viewingCustomer, setViewingCustomer] = useState(null);
 
 
@@ -119,9 +120,9 @@ const CustomerModule = ({ isAdmin }) => {
             }
         );
     };
-
     const handleAddCustomer = async (e) => {
         e.preventDefault();
+        setIsSaving(true);
         try {
             if (editingCustomerId) {
                 await api.put(`/customers/${editingCustomerId}`, newCustomer);
@@ -135,6 +136,8 @@ const CustomerModule = ({ isAdmin }) => {
         } catch (err) {
             console.error('Error saving customer:', err);
             alert('Failed to save customer');
+        } finally {
+            setIsSaving(false);
         }
     };
 
@@ -386,8 +389,19 @@ const CustomerModule = ({ isAdmin }) => {
                                 </div>
                             </div>
 
-                            <button type="submit" className="premium-button bg-indigo-600 text-white md:col-span-2 py-4">
-                                {editingCustomerId ? 'Update Profile' : 'Registry Customer'}
+                            <button
+                                type="submit"
+                                disabled={isSaving}
+                                className="premium-button bg-indigo-600 text-white md:col-span-2 py-4 flex items-center justify-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed transition hover:bg-indigo-700 font-bold rounded-xl"
+                            >
+                                {isSaving ? (
+                                    <>
+                                        <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                                        <span>{editingCustomerId ? 'Updating...' : 'Saving...'}</span>
+                                    </>
+                                ) : (
+                                    <span>{editingCustomerId ? 'Update Customer' : 'Add New Customer'}</span>
+                                )}
                             </button>
                         </form>
                     </div>

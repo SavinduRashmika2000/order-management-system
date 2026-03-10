@@ -14,6 +14,7 @@ const UserModule = ({ isAdmin }) => {
         password: '',
         role: 'REP'
     });
+    const [isSaving, setIsSaving] = useState(false);
 
     useEffect(() => {
         fetchUsers();
@@ -42,6 +43,7 @@ const UserModule = ({ isAdmin }) => {
 
     const handleAddUser = async (e) => {
         e.preventDefault();
+        setIsSaving(true);
         try {
             if (editingUserId) {
                 // If password is not changed, we don't send it, or we send it empty and backend ignores it.
@@ -61,6 +63,8 @@ const UserModule = ({ isAdmin }) => {
         } catch (err) {
             console.error('Error saving user:', err);
             alert('Failed to save user');
+        } finally {
+            setIsSaving(false);
         }
     };
 
@@ -197,8 +201,19 @@ const UserModule = ({ isAdmin }) => {
                                     <option value="REP">REP (Limited Access)</option>
                                 </select>
                             </div>
-                            <button type="submit" className="bg-indigo-600 text-white w-full py-4 rounded-2xl hover:bg-indigo-700 transition font-bold mt-4 shadow-lg shadow-indigo-200 tracking-wide uppercase text-sm">
-                                {editingUserId ? 'Update User Account' : 'Register User'}
+                            <button
+                                type="submit"
+                                disabled={isSaving}
+                                className="bg-indigo-600 text-white w-full py-4 rounded-2xl hover:bg-indigo-700 transition font-bold mt-4 shadow-lg shadow-indigo-200 tracking-wide uppercase text-sm flex items-center justify-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed"
+                            >
+                                {isSaving ? (
+                                    <>
+                                        <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                                        <span>{editingUserId ? 'Updating...' : 'Registering...'}</span>
+                                    </>
+                                ) : (
+                                    <span>{editingUserId ? 'Update User Account' : 'Register User'}</span>
+                                )}
                             </button>
                         </form>
                     </div>

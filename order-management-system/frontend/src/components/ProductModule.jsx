@@ -25,6 +25,9 @@ const ProductModule = ({ isAdmin }) => {
         price: '',
         discount: '0'
     });
+    const [isSaving, setIsSaving] = useState(false);
+    const [isCategorySaving, setIsCategorySaving] = useState(false);
+    const [isStockSaving, setIsStockSaving] = useState(false);
 
     useEffect(() => {
         fetchProducts();
@@ -57,6 +60,7 @@ const ProductModule = ({ isAdmin }) => {
 
     const handleAddCategory = async (e) => {
         e.preventDefault();
+        setIsCategorySaving(true);
         try {
             await api.post('/categories', { name: newCategoryName });
             setNewCategoryName('');
@@ -65,6 +69,8 @@ const ProductModule = ({ isAdmin }) => {
         } catch (err) {
             console.error('Error adding category:', err);
             alert('Failed to add category');
+        } finally {
+            setIsCategorySaving(false);
         }
     };
 
@@ -134,6 +140,7 @@ const ProductModule = ({ isAdmin }) => {
             status: newProduct.status || 'ACTIVE'
         };
 
+        setIsSaving(true);
         try {
             if (editingProductId) {
                 await api.put(`/products/${editingProductId}`, productData);
@@ -155,6 +162,8 @@ const ProductModule = ({ isAdmin }) => {
         } catch (err) {
             console.error('Error saving product:', err);
             alert('Failed to save product');
+        } finally {
+            setIsSaving(false);
         }
     };
 
@@ -389,8 +398,19 @@ const ProductModule = ({ isAdmin }) => {
                                     )}
                                 </div>
                             </div>
-                            <button type="submit" className="bg-indigo-600 text-white py-4 rounded-2xl hover:bg-indigo-700 transition font-bold md:col-span-2 mt-6 shadow-lg shadow-indigo-200">
-                                {editingProductId ? 'Update Product Information' : 'Save New Product'}
+                            <button
+                                type="submit"
+                                disabled={isSaving}
+                                className="bg-indigo-600 text-white py-4 rounded-2xl hover:bg-indigo-700 transition font-bold md:col-span-2 mt-6 shadow-lg shadow-indigo-200 disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                            >
+                                {isSaving ? (
+                                    <>
+                                        <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                                        <span>{editingProductId ? 'Updating...' : 'Saving...'}</span>
+                                    </>
+                                ) : (
+                                    <span>{editingProductId ? 'Update Product Information' : 'Save New Product'}</span>
+                                )}
                             </button>
                         </form>
                     </div>
@@ -424,9 +444,17 @@ const ProductModule = ({ isAdmin }) => {
                                 </button>
                                 <button
                                     type="submit"
-                                    className="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition font-bold"
+                                    disabled={isCategorySaving}
+                                    className="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition font-bold disabled:opacity-70 flex items-center gap-2"
                                 >
-                                    Save Category
+                                    {isCategorySaving ? (
+                                        <>
+                                            <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                                            <span>Saving...</span>
+                                        </>
+                                    ) : (
+                                        'Save Category'
+                                    )}
                                 </button>
                             </div>
                         </form>
