@@ -6,5 +6,9 @@ export default defineConfig({
   plugins: [react()],
   server: {
     port: 5174
+  },
+  build: {
+    outDir: '../src/main/resources/static',
+    emptyOutDir: true
   }
 })
