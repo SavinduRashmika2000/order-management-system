@@ -1,6 +1,7 @@
 import axios from 'axios';
 
-const API_BASE_URL = 'http://localhost:9090';
+// Use relative URL in production (served by Spring Boot), use localhost for dev server
+const API_BASE_URL = import.meta.env.PROD ? '' : 'http://localhost:9090';
 
 const api = axios.create({
     baseURL: `${API_BASE_URL}/api/v1`,
