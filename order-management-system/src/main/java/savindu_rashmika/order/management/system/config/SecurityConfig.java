@@ -1,6 +1,7 @@
 package savindu_rashmika.order.management.system.config;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -33,11 +34,24 @@ public class SecurityConfig {
                                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                                 .csrf(AbstractHttpConfigurer::disable)
                                 .authorizeHttpRequests(auth -> auth
+                                                .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
                                                 .requestMatchers(
                                                         "/",
                                                         "/index.html",
+                                                        "/login",
+                                                        "/dashboard/**",
+                                                        "/users/**",
+                                                        "/products/**",
+                                                        "/customers/**",
+                                                        "/orders/**",
+                                                        "/admin/**",
+                                                        "/rep/**",
                                                         "/assets/**",
-                                                        "/favicon.ico"
+                                                        "/*.js",
+                                                        "/*.css",
+                                                        "/*.ico",
+                                                        "/*.png",
+                                                        "/*.svg"
                                                 ).permitAll()
                                                 .requestMatchers("/api/v1/auth/**").permitAll()
                                                 .requestMatchers("/uploads/**").permitAll()
@@ -69,7 +83,8 @@ public class SecurityConfig {
                 CorsConfiguration configuration = new CorsConfiguration();
                 configuration.setAllowedOrigins(
                                 List.of("http://localhost:5173", "http://localhost:5174", "http://localhost:5175",
-                                                "http://localhost:5176", "http://localhost:5177"));
+                                                "http://localhost:5176", "http://localhost:5177",
+                                                "https://order-management-system-production-da89.up.railway.app"));
                 configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
                 configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type"));
                 configuration.setAllowCredentials(true);
