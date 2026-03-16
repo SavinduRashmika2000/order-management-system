@@ -14,6 +14,12 @@ const AdminDashboard = () => {
 
     const handleLogout = () => {
         localStorage.clear();
+        // Clear all cookies
+        document.cookie.split(";").forEach((c) => {
+            document.cookie = c
+                .replace(/^ +/, "")
+                .replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/");
+        });
         navigate('/login');
     };
 
